@@ -19,7 +19,6 @@ import yaml
 from utils import fileio, summary
 from omegaconf import OmegaConf, DictConfig
 from skimage.metrics import structural_similarity as ssim
-import lpips
 import cv2
 
 parser = argparse.ArgumentParser()
@@ -28,18 +27,6 @@ parser.add_argument("--out_dir", help="Output directory.", type=str, required=Tr
 
 torch.backends.cuda.matmul.allow_tf32 = False
 torch.backends.cudnn.allow_tf32 = False
-class util_of_lpips():
-    def __init__(self, net):
-        # Initializing the model
-        self.loss_fn = lpips.LPIPS(net=net)
-
-    def calc_lpips(self, img1, img2):
-        # normalize to [-1, 1]
-        img1 = (img1 - 0.5) * 2
-        img2 = (img2 - 0.5) * 2
-
-        dist01 = self.loss_fn.forward(img1, img2)
-        return dist01
 
 def fit(gt_img, recon_img, mask):
     '''
@@ -50,7 +37,7 @@ def fit(gt_img, recon_img, mask):
     gt_img_pixels = gt_img[indices] # Nx3
     recon_img_pixels = recon_img[indices] # Nx3
     R = np.linalg.pinv(recon_img_pixels).dot(gt_img_pixels)
-    return recon_img.dot(R)
+    return recon_img.dot(R), R
 
 def load_config(path):
     with open(path, 'r') as f:
@@ -102,10 +89,8 @@ def main(args):
     summary.export_eval(config, model.decoder, save_path, device, id_latent, exp_latent,
                         '{0}_{1}'.format(id_init, exp_init), model.residual)
     model.eval()
-    lp = util_of_lpips('vgg')
     all_psnr = []
     all_ssim = []
-    all_lpips = []
     for data_index, (indices, model_input, ground_truth) in enumerate(tqdm(test_loader)):
         model_input["intrinsics"] = model_input["intrinsics"].to(device)
         model_input["uv"] = model_input["uv"].to(device)
@@ -172,7 +157,7 @@ def main(args):
             rgb_eval = rgb_eval.transpose(1, 2, 0)
             rgb_gt = rgb_eval
             # Eliminate the effect of exposure by applying a calibration matrix
-            rgb_pred = fit(rgb_gt, rgb_pred, mask.squeeze(-1))
+            rgb_pred, R = fit(rgb_gt, rgb_pred, mask.squeeze(-1))
             rgb_pred = np.clip(rgb_pred, 0, 1)
             rgb_eval = (rgb_pred * 255).astype(np.uint8)
             rgb_eval[mask.squeeze(-1) == 0] = 0
@@ -186,22 +171,6 @@ def main(args):
             all_ssim.append(ss)
             ps = calc_psnr(torch.tensor(rgb_pred), torch.tensor(rgb_gt), torch.tensor(mask))
             all_psnr.append(ps)
-            # compute the LPIPS of different scale image
-            lp_dist = lp.calc_lpips(torch.tensor(rgb_pred).permute(2,0,1), torch.tensor(rgb_gt).permute(2,0,1)).item()
-            rgb_pred = cv2.resize(rgb_pred, (rgb_pred.shape[1] // 2, rgb_pred.shape[0] // 2), interpolation=cv2.INTER_AREA)
-            rgb_gt = cv2.resize(rgb_gt, (rgb_gt.shape[1] // 2, rgb_gt.shape[0] // 2),
-                                  interpolation=cv2.INTER_AREA)
-            lp_dist += lp.calc_lpips(torch.tensor(rgb_pred).permute(2, 0, 1),
-                                    torch.tensor(rgb_gt).permute(2, 0, 1)).item()
-            rgb_pred = cv2.resize(rgb_pred, (rgb_pred.shape[1] // 2, rgb_pred.shape[0] // 2),
-                                  interpolation=cv2.INTER_AREA)
-            rgb_gt = cv2.resize(rgb_gt, (rgb_gt.shape[1] // 2, rgb_gt.shape[0] // 2),
-                                interpolation=cv2.INTER_AREA)
-            lp_dist += lp.calc_lpips(torch.tensor(rgb_pred).permute(2, 0, 1),
-                                     torch.tensor(rgb_gt).permute(2, 0, 1)).item()
-            lp_dist /= 3
-            all_lpips.append(lp_dist)
-
 
         rgb_eval = model_outputs['diffuse_values']
         rgb_eval = rgb_eval.reshape(batch_size, total_pixels, 3)
@@ -256,7 +225,6 @@ def main(args):
     else:
         print('The mean psnr is: ', torch.mean(torch.tensor(all_psnr)).item())
         print('The mean ssim is: ', torch.mean(torch.tensor(all_ssim)).item())
-        print('The mean lpips is: ', torch.mean(torch.tensor(all_lpips)).item())
 
 
 def calc_psnr(x: torch.Tensor, y: torch.Tensor, mask):

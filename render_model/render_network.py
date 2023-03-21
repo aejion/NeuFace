@@ -61,7 +61,7 @@ class RefNetwork(nn.Module):
         layers = []
         for i in range(net_depth_condition):
             if i == 0:
-                dim_in = 1 + 6
+                dim_in = 1 + 6 + 1
                 dim_out = net_width_condition
             else:
                 dim_in = net_width_condition
@@ -90,7 +90,7 @@ class RefNetwork(nn.Module):
             linear = torch.nn.Linear(dim_in, dim_out)
             _xavier_init(linear)
             layers.append(torch.nn.Sequential(linear, torch.nn.ReLU(True)))
-        linear = torch.nn.Linear(128, 9)
+        linear = torch.nn.Linear(net_width_condition, 9)
         _xavier_init(linear)
         layers.append(linear)
         self.calibration_network = torch.nn.Sequential(*layers)
@@ -121,7 +121,7 @@ class RefNetwork(nn.Module):
         wr = 2 * normals * dot - w0
         light_transport = e3_SH(lmax=10, directions=wr, sh=sh_light, rho=roughness)
         light_transport = torch.relu(light_transport)
-        x = torch.cat([dot, w0, normals], dim=-1)
+        x = torch.cat([dot, w0, normals, roughness], dim=-1)
         for index, layer in enumerate(self.brdf_network):
             x = layer(x)
         brdf = self.basis_layer(x)

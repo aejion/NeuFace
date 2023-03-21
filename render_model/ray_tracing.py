@@ -99,10 +99,8 @@ class RayTracing(nn.Module):
         next_sdf_end = torch.zeros_like(acc_end_dis).to(self.device)
         if unfinished_mask_end.sum() > 0:
             next_sdf_end[unfinished_mask_end] = sdf(curr_end_points[unfinished_mask_end], self.id_latent, self.exp_latent).to(self.device)
-        # self.point_num += unfinished_mask_start.sum()
         no_intersection = (next_sdf_end < 0) & (next_sdf_start < 0)
         while True:
-            # self.trace_num += unfinished_mask_start.sum()
             # Update sdf
             curr_sdf_start = torch.zeros_like(acc_start_dis).to(self.device)
             curr_sdf_start[unfinished_mask_start] = next_sdf_start[unfinished_mask_start]
@@ -125,8 +123,6 @@ class RayTracing(nn.Module):
             curr_sdf_end = torch.clamp(curr_sdf_end, -0.5, 0.5)
             acc_start_dis = acc_start_dis + curr_sdf_start
             acc_end_dis = acc_end_dis - curr_sdf_end
-            # acc_start_dis = acc_start_dis + curr_sdf_start
-            # acc_end_dis = acc_end_dis - curr_sdf_end
 
             # Update points
             curr_start_points = (cam_loc.unsqueeze(1) + acc_start_dis.reshape(batch_size, num_pixels, 1) * ray_directions).reshape(-1, 3)

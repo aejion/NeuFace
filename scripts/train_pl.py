@@ -85,5 +85,5 @@ if __name__ == "__main__":
     train_config.DATA_CONFIG.EXP_NUM = len(exp2idx)
     train_config.DATA_CONFIG.TEMPLATE_KPTS = torch.zeros((68, 3)).float()
     os.environ["MASTER_ADDR"] = 'localhost'
-    os.environ["MASTER_PORT"] = '2834'
+    os.environ["MASTER_PORT"] = '2818'
     main(config, train_config, id2idx, exp2idx)

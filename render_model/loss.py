@@ -33,8 +33,7 @@ class IDRLoss(nn.Module):
     def energy_loss(self, spec):
         if spec == None:
             return torch.tensor(0.0).to(self.device).float()
-
-        return torch.max(spec)
+        return torch.mean(spec)
 
     def residual_loss(self, residual):
         if residual == None:

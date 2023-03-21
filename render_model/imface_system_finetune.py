@@ -75,12 +75,12 @@ class ImfaceSystem(LightningModule):
         torch.nn.init.normal_(
             self.id_lat_vecs.weight.data,
             0.0,
-            0.0,
+            0.01,
         )
         torch.nn.init.normal_(
             self.exp_lat_vecs.weight.data,
             0.0,
-            0.0,
+            0.01,
         )
         latent_size = 50
         self.calibration_lat_vecs = torch.nn.Embedding(55, latent_size, max_norm=1.0)
@@ -92,7 +92,7 @@ class ImfaceSystem(LightningModule):
         self.loss_function = IDRLoss(device, **config.loss)
 
         self.log_num = -1
-        # init the lower orders as NERF-OSR
+        # init the lower orders from NERF-OSR
         default_l = torch.tensor([[2.9861e+00, 3.4646e+00, 3.9559e+00],
             [1.0013e-01, -6.7589e-02, -3.1161e-01],
             [-8.2520e-01, -5.2738e-01, -9.7385e-02],
@@ -158,9 +158,9 @@ class ImfaceSystem(LightningModule):
     def training_step(self, batch, batch_nb):
         self.log_num = (self.log_num+1)
         indices, model_input, ground_truth = batch
-        person_num = model_input["id"]
+        identity_num = model_input["id"]
         expression_num = model_input["exp"]
-        id_latent = self.id_lat_vecs(person_num)
+        id_latent = self.id_lat_vecs(identity_num)
         exp_latent = self.exp_lat_vecs(expression_num)
         model_input['id_latent'] = id_latent
         model_input['exp_latent'] = exp_latent
@@ -169,7 +169,6 @@ class ImfaceSystem(LightningModule):
         sh_light = self.sh_light(torch.tensor([0]).to(calibration_code.device)).reshape(-1, 121, 3)
         model_input['sh_light'] = sh_light
 
-        # gt_pts = model_input['key_pts']
         output = self(model_input)
 
         loss_output = self.loss_function(output, ground_truth, id_latent, exp_latent)
@@ -193,9 +192,9 @@ class ImfaceSystem(LightningModule):
         w = self.val_dataset.w[indices]
         img_res = [h, w]
         total_pixels = h * w
-        person_num = model_input["id"]
+        identity_num = model_input["id"]
         expression_num = model_input["exp"]
-        id_latent = self.id_lat_vecs(person_num)
+        id_latent = self.id_lat_vecs(identity_num)
         exp_latent = self.exp_lat_vecs(expression_num)
         model_input['id_latent'] = id_latent
         model_input['exp_latent'] = exp_latent

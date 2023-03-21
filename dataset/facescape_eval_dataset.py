@@ -86,7 +86,7 @@ class FaceScape(torch.utils.data.Dataset):
                  data_dir, factor
                  ):
 
-        self.instance_dir = os.path.join('data', data_dir)
+        self.instance_dir = os.path.join(data_dir)
 
         assert os.path.exists(self.instance_dir), "Data directory is empty"
 
@@ -114,8 +114,8 @@ class FaceScape(torch.utils.data.Dataset):
 
         list_theta = [90]
         for th in tqdm(list_theta):
-            for ph in range(1):
-                c2w = pose_spherical(th, -48 + -10 * 4.2, 7.52455745)
+            for ph in range(20):
+                c2w = pose_spherical(th, -48 + -ph * 4.2, 7.52455745)
                 self.pose_all.append(c2w)
                 self.intrinsics_all.append(torch.from_numpy(intrinsics).float())
         id_idx = 1
@@ -124,7 +124,7 @@ class FaceScape(torch.utils.data.Dataset):
         self.h = []
         self.w = []
         self.exp_num = []
-        for i in range(1):
+        for i in range(20):
             self.exp_num.append(i)
             self.h.append(h)
             self.w.append(w)
@@ -135,7 +135,7 @@ class FaceScape(torch.utils.data.Dataset):
             self.rgb_images.append(torch.from_numpy(rgb).float())
 
         self.object_masks = []
-        for i in range(1):
+        for i in range(20):
             object_mask = np.zeros((512 * 512))
             object_mask = object_mask.reshape(-1)
             self.object_masks.append(torch.from_numpy(object_mask).bool())
@@ -205,44 +205,3 @@ class FaceScape(torch.utils.data.Dataset):
                 total = self.h[i] * self.w[i]
                 s_idx = torch.randperm(total)[:sampling_size]
                 self.sampling_idx.append(s_idx)
-
-    def get_scale_mat(self):
-        return np.load(self.cam_file)['scale_mat_0']
-
-    def get_gt_pose(self, scaled=False):
-        # Load gt pose without normalization to unit sphere
-        # camera_dict = np.load(self.cam_file)
-        # world_mats = [camera_dict['world_mat_%d' % idx].astype(np.float32) for idx in range(self.n_images)]
-        # scale_mats = [camera_dict['scale_mat_%d' % idx].astype(np.float32) for idx in range(self.n_images)]
-        #
-        # pose_all = []
-        # for scale_mat, world_mat in zip(scale_mats, world_mats):
-        #     P = world_mat
-        #     if scaled:
-        #         P = world_mat @ scale_mat
-        #     P = P[:3, :4]
-        #     _, pose = rend_util.load_K_Rt_from_P(None, P)
-        #     pose_all.append(torch.from_numpy(pose).float())
-
-        return torch.cat([p.float().unsqueeze(0) for p in self.pose_all], 0)
-
-    def get_pose_init(self):
-        # get noisy initializations obtained with the linear method
-        # cam_file = '{0}/cameras_linear_init.npz'.format(self.instance_dir)
-        # camera_dict = np.load(cam_file)
-        # scale_mats = [camera_dict['scale_mat_%d' % idx].astype(np.float32) for idx in range(self.n_images)]
-        # world_mats = [camera_dict['world_mat_%d' % idx].astype(np.float32) for idx in range(self.n_images)]
-        #
-        # init_pose = []
-        # for scale_mat, world_mat in zip(scale_mats, world_mats):
-        #     P = world_mat @ scale_mat
-        #     P = P[:3, :4]
-        #     _, pose = rend_util.load_K_Rt_from_P(None, P)
-        #     init_pose.append(pose)
-        render_poses = torch.stack(
-            [pose_spherical(95, angle, 7.48381597) for angle in np.linspace(-180, 0, 20 + 1)[:-1]], 0)
-        init_pose = torch.cat([torch.Tensor(pose).float().unsqueeze(0) for pose in render_poses], 0).cuda()
-        init_quat = rend_util.rot_to_quat(init_pose[:, :3, :3])
-        init_quat = torch.cat([init_quat, init_pose[:, :3, 3]], 1)
-
-        return init_quat

@@ -156,7 +156,6 @@ def evaluate(**kwargs):
             rgb_pred = rgb_eval
             rgb_eval[mask.squeeze() == 0] = 1
             img = Image.fromarray((rgb_eval * 255).astype(np.uint8))
-            img = img.rotate(180, fillcolor=(255,255,255))
             img.save('{0}/rgb_{1}.png'.format(images_dir, '%03d' % indices[0]))
 
             rgb_pred, R = fit(rgb_gt, rgb_pred, mask.squeeze(-1))
@@ -174,7 +173,6 @@ def evaluate(**kwargs):
             rgb_eval = np.clip(rgb_eval, 0, 1)
             rgb_eval[mask.squeeze() == 0] = 1
             img = Image.fromarray((rgb_eval * 255).astype(np.uint8))
-            img = img.rotate(180, fillcolor=(255,255,255))
             img.save('{0}/albedo_{1}.png'.format(images_dir, '%03d' % indices[0]))
 
             rgb_eval = model_outputs['diffuse_values']
@@ -184,7 +182,6 @@ def evaluate(**kwargs):
             rgb_eval = np.clip(rgb_eval, 0, 1)
             rgb_eval[mask.squeeze() == 0] = 1
             img = Image.fromarray((rgb_eval * 255).astype(np.uint8))
-            img = img.rotate(180, fillcolor=(255,255,255))
             img.save('{0}/diffuse_{1}.png'.format(images_dir, '%03d' % indices[0]))
 
             rgb_eval = model_outputs['spec_values']
@@ -194,7 +191,6 @@ def evaluate(**kwargs):
             rgb_eval = np.clip(rgb_eval, 0, 1)
             rgb_eval[mask.squeeze() == 0] = 1
             img = Image.fromarray((rgb_eval * 255).astype(np.uint8))
-            img = img.rotate(180, fillcolor=(255,255,255))
             img.save('{0}/spec_{1}.png'.format(images_dir, '%03d' % indices[0]))
 
             normal = model_outputs['normals']
@@ -208,7 +204,6 @@ def evaluate(**kwargs):
             normal = normal * mask
             normal[mask.squeeze() == 0] = 255
             img = Image.fromarray(normal)
-            img = img.rotate(180, fillcolor=(255,255,255))
             img.save('{0}/normal_{1}.png'.format(images_dir,'%03d' % indices[0]))
 
             rgb_eval = rgb_pred * mask
@@ -224,51 +219,6 @@ def evaluate(**kwargs):
         print("RENDERING EVALUATION {2}: psnr mean = {0} ; psnr std = {1}".format("%.2f" % psnrs.mean(), "%.2f" % psnrs.std(), scan_id))
         print('ssim mean = {0} ; ssim std = {1}'.format(ssims.mean(), ssims.std()))
 
-def get_cameras_accuracy(pred_Rs, gt_Rs, pred_ts, gt_ts,):
-    ''' Align predicted pose to gt pose and print cameras accuracy'''
-
-    # find rotation
-    d = pred_Rs.shape[-1]
-    n = pred_Rs.shape[0]
-
-    Q = torch.addbmm(torch.zeros(d, d, dtype=torch.double), gt_Rs, pred_Rs.transpose(1, 2))
-    Uq, _, Vq = torch.svd(Q)
-    sv = torch.ones(d, dtype=torch.double)
-    sv[-1] = torch.det(Uq @ Vq.transpose(0, 1))
-    R_opt = Uq @ torch.diag(sv) @ Vq.transpose(0, 1)
-    R_fixed = torch.bmm(R_opt.repeat(n, 1, 1), pred_Rs)
-
-    # find translation
-    pred_ts = pred_ts @ R_opt.transpose(0, 1)
-    c_opt = cp.Variable()
-    t_opt = cp.Variable((1, d))
-
-    constraints = []
-    obj = cp.Minimize(cp.sum(
-        cp.norm(gt_ts.numpy() - (c_opt * pred_ts.numpy() + np.ones((n, 1), dtype=np.double) @ t_opt), axis=1)))
-    prob = cp.Problem(obj, constraints)
-    prob.solve()
-    t_fixed = c_opt.value * pred_ts.numpy() + np.ones((n, 1), dtype=np.double) * t_opt.value
-
-    # Calculate transaltion error
-    t_error = np.linalg.norm(t_fixed - gt_ts.numpy(), axis=-1)
-    t_error = t_error
-    t_error_mean = np.mean(t_error)
-    t_error_medi = np.median(t_error)
-
-    # Calculate rotation error
-    R_error = compare_rotations(R_fixed, gt_Rs)
-
-    R_error = R_error.numpy()
-    R_error_mean = np.mean(R_error)
-    R_error_medi = np.median(R_error)
-
-    print('CAMERAS EVALUATION: R error mean = {0} ; t error mean = {1} ; R error median = {2} ; t error median = {3}'
-          .format("%.2f" % R_error_mean, "%.2f" % t_error_mean, "%.2f" % R_error_medi, "%.2f" % t_error_medi))
-
-    # return alignment and aligned pose
-    return R_opt.numpy(), t_opt.value, c_opt.value, R_fixed.numpy(), t_fixed
-
 def compare_rotations(R1, R2):
     cos_err = (torch.bmm(R1, R2.transpose(1, 2))[:, torch.arange(3), torch.arange(3)].sum(dim=-1) - 1) / 2
     cos_err[cos_err > 1] = 1
@@ -277,10 +227,6 @@ def compare_rotations(R1, R2):
 
 def calculate_psnr(img1, img2, mask):
     # img1 and img2 have range [0, 1]
-    # print(img1.shape)
-    # print(img2.shape)
-    # print(mask.shape)
-    # t = t
     img1 = img1.astype(np.float64)
     img2 = img2.astype(np.float64)
     mse = np.mean((img1 - img2)**2) * (img2.shape[0] * img2.shape[1]) / mask.sum()
@@ -298,7 +244,7 @@ if __name__ == '__main__':
     parser.add_argument('--timestamp', default='latest', type=str, help='The experiemnt timestamp to test.')
     parser.add_argument('--checkpoint', default='latest',type=str,help='The trained model checkpoint to test')
     parser.add_argument('--scan_id', type=int, default=-1, help='If set, taken to be the scan id.')
-    parser.add_argument('--resolution', default=512, type=int, help='Grid resolution for marching cube')
+    parser.add_argument('--resolution', default=256, type=int, help='Grid resolution for marching cube')
     parser.add_argument('--is_uniform_grid', default=False, action="store_true", help='If set, evaluate marching cube with uniform grid.')
     parser.add_argument('--eval_cameras', default=False, action="store_true", help='If set, evaluate camera accuracy of trained cameras.')
     parser.add_argument('--eval_rendering', default=False, action="store_true", help='If set, evaluate rendering quality.')

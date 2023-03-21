@@ -131,15 +131,10 @@ def get_surface_high_res_mesh(id_latent, exp_latent, density_fun, sdf, resolutio
     points = grid['grid_points']
 
     for i, pnts in enumerate(torch.split(points, 100000, dim=0)):
-        # id = id_latent.repeat(1, pnts.shape[0], 1).reshape(-1, 128)
-        # exp = exp_latent.repeat(1, pnts.shape[0], 1).reshape(-1, 128)
-        # z.append(sdf(pnts, id, exp).detach().cpu().numpy())
-        # dir = torch.zeros_like(pnts).cuda()
         z.append(sdf(pnts, exp_latent, id_latent).detach().cpu().numpy())
     z = np.concatenate(z, axis=0)
 
     z = z.astype(np.float32)
-    # z = np.maximum(z, 0)
 
     verts, faces, normals, values = measure.marching_cubes_lewiner(
         volume=z.reshape(grid['xyz'][1].shape[0], grid['xyz'][0].shape[0],
@@ -157,7 +152,6 @@ def get_surface_high_res_mesh(id_latent, exp_latent, density_fun, sdf, resolutio
     z[condition1] = 0
     z[condition2] = 1
     z = z.astype(bool)
-    print(z.shape)
     density = []
     points = grid['grid_points']
 
@@ -167,7 +161,6 @@ def get_surface_high_res_mesh(id_latent, exp_latent, density_fun, sdf, resolutio
     density = np.concatenate(density, axis=0)
     density = density.astype(np.float32)
     density = np.maximum(density, 0)
-    print(density.max())
 
     verts, faces, normals, values = measure.marching_cubes_lewiner(
         volume=density.reshape(grid['xyz'][1].shape[0], grid['xyz'][0].shape[0],
@@ -191,70 +184,6 @@ def get_surface_high_res_mesh(id_latent, exp_latent, density_fun, sdf, resolutio
     outd = outd * outz * mask
     print(outd[outd > 0].shape)
     np.save('density.npy', outd)
-
-    # components = mesh_low_res.split(only_watertight=False)
-    # areas = np.array([c.area for c in components], dtype=np.float)
-    # mesh_clean = components[areas.argmax()]
-    # components = mesh_low_res.split(only_watertight=False)
-    # areas = np.array([c.area for c in components], dtype=np.float)
-    # mesh_low_res = components[areas.argmax()]
-    #
-    # recon_pc = trimesh.sample.sample_surface(mesh_low_res, 10000)[0]
-    # recon_pc = torch.from_numpy(recon_pc).float().cuda()
-    #
-    # # Center and align the recon pc
-    # s_mean = recon_pc.mean(dim=0)
-    # s_cov = recon_pc - s_mean
-    # s_cov = torch.mm(s_cov.transpose(0, 1), s_cov)
-    # vecs = torch.eig(s_cov, True)[1].transpose(0, 1)
-    # if torch.det(vecs) < 0:
-    #     vecs = torch.mm(torch.tensor([[1, 0, 0], [0, 0, 1], [0, 1, 0]]).cuda().float(), vecs)
-    # helper = torch.bmm(vecs.unsqueeze(0).repeat(recon_pc.shape[0], 1, 1),
-    #                    (recon_pc - s_mean).unsqueeze(-1)).squeeze()
-    #
-    # grid_aligned = get_grid(helper.cpu(), resolution)
-    #
-    # grid_points = grid_aligned['grid_points']
-    #
-    # g = []
-    # for i, pnts in enumerate(torch.split(grid_points, 100000, dim=0)):
-    #     g.append(torch.bmm(vecs.unsqueeze(0).repeat(pnts.shape[0], 1, 1).transpose(1, 2),
-    #                        pnts.unsqueeze(-1)).squeeze() + s_mean)
-    # grid_points = torch.cat(g, dim=0)
-    #
-    # # MC to new grid
-    # points = grid_points
-    # z = []
-    # for i, pnts in enumerate(torch.split(points, 100000, dim=0)):
-    #     # id = id_latent.repeat(1, pnts.shape[0], 1).reshape(-1, 128)
-    #     # exp = exp_latent.repeat(1, pnts.shape[0], 1).reshape(-1, 128)
-    #     # z.append(sdf(pnts, id, exp).detach().cpu().numpy())
-    #     dir = torch.zeros_like(pnts).cuda()
-    #     z.append(sdf(pnts, dir, id_latent, exp_latent).detach().cpu().numpy())
-    # z = np.concatenate(z, axis=0)
-    # z = np.maximum(z, 0)
-    # meshexport = None
-    # if (not (np.min(z) > 0 or np.max(z) < 0)):
-    #
-    #     z = z.astype(np.float32)
-    #
-    #     verts, faces, normals, values = measure.marching_cubes_lewiner(
-    #         volume=z.reshape(grid_aligned['xyz'][1].shape[0], grid_aligned['xyz'][0].shape[0],
-    #                          grid_aligned['xyz'][2].shape[0]).transpose([1, 0, 2]),
-    #         level=0,
-    #         spacing=(grid_aligned['xyz'][0][2] - grid_aligned['xyz'][0][1],
-    #                  grid_aligned['xyz'][0][2] - grid_aligned['xyz'][0][1],
-    #                  grid_aligned['xyz'][0][2] - grid_aligned['xyz'][0][1]))
-    #
-    #     verts = torch.from_numpy(verts).cuda().float()
-    #     verts = torch.bmm(vecs.unsqueeze(0).repeat(verts.shape[0], 1, 1).transpose(1, 2),
-    #                verts.unsqueeze(-1)).squeeze()
-    #     verts = (verts + grid_points[0]).cpu().numpy()
-    #
-    #     meshexport = trimesh.Trimesh(verts, faces, normals)
-    #
-    # meshexport.export('test.ply')
-    # return meshexport
 
 
 def get_grid_uniform(resolution):

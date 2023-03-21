@@ -1,8 +1,7 @@
 seed: 42
 
 # Training Parameters:
-load_path: '../imface_render/result/2022-07-05_16-04'
-#load_path: './result/2022-12-21_23-52'
+load_path: './result/2022-07-05_16-04'
 
 # Testing Parameters:
 voxel_resolution: 64
@@ -12,14 +11,14 @@ grid_radius: 1
 # Hyper Parameters:
 sample_num: 16384
 out_dir: 'exp_pl'
-expname: 'neuface_212_id_1_exp_max_sepc_005'
+expname: 'neuface_1_id_2_exp'
 num_gpus: 4
 
 dataset:
-  data_dir: '../imface_render/data/facescape'
+  data_dir: './data/facescape'
   batch_size: 1
-  facescape_id: 212
-  facescape_exp: 1
+  facescape_id: 1
+  facescape_exp: 2
   factor: 4
 
 rendering_network:
@@ -54,7 +53,7 @@ train:
 loss:
   eikonal_weight: 0.1
   embedding_weight: 1000
-  spec_weight: 0.005
+  spec_weight: 0.008
   light_reg: 0.005
   residual_weight: 0.001
 
@@ -63,4 +62,4 @@ plot:
   max_depth: 3.0
   resolution: 50
 
-eval_type: 'evalset'
+eval_type: 'testset'

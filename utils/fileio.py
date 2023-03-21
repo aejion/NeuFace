@@ -9,10 +9,8 @@ class OBJ:
         """Loads a Wavefront OBJ file. """
         self.vertices = []
         self.texcoords = []
-        # 二维与三维三角面的对应关系，相当于一个三角面与另外一个三角面的对应
         self.face3d = []
         self.face2d = []
-        # faces中保存二维到三维的对应关系
         self.faces = {}
 
         for line in open(filename, "r"):
@@ -41,7 +39,6 @@ class OBJ:
                         texcoords = self.texcoords[int(w[1]) - 1]
                         texds.append(list(texcoords))
                     else:
-                        # 不存在这种情况，如果存在说明数据存在缺失
                         texcoords = 0
                     self.faces[texcoords] = face
                 self.face3d.append(faces)

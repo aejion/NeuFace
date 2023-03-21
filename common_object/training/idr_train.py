@@ -204,8 +204,6 @@ class IDRTrainRunner():
         print("training...")
 
         all_loss = {'eikonal_loss': 0,
-                    'exp_loss': 0,
-                    'id_loss': 0,
                     'loss': 0,
                     'mask_loss': 0,
                     'rgb_loss': 0}

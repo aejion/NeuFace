@@ -375,7 +375,7 @@ class IDRNetwork(nn.Module):
             rgb_values[surface_mask] = rgb_value
 
             albedo = torch.matmul(albedo, affine)
-            albedo = torch.clamp(albedo, 0.0, 1.0)
+            albedo = torch.clamp(albedo * 3.1415926, 0.0, 1.0)
             albedo_values[surface_mask] = albedo
 
             diffuse = torch.matmul(diffuse, affine)
