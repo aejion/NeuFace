@@ -38,6 +38,7 @@ Our trained model can be downloaded as follow (we have obtained the author's con
 | Trained Model            | Description  |
 |-------------------|-------------------------------------------------------------|
 | <a href="https://drive.google.com/drive/folders/1bPtSOnC4OrzU2px6TWOFqv4Xro9h6bW9?usp=sharing" target="_blank">NeuFace_212_id_1_exp</a> | train on 212 id with neutral expression of Facescape dataset|
+
 If you want to use our trained model, please put the file that you download at `exp_pl/ckpt/{trained_model}`.
 ### Evaluation on Facescape
 For evaluating the novel view metrics, run:
@@ -60,6 +61,8 @@ Our trained model can be downloaded as follow:
 | <a href="https://drive.google.com/drive/folders/1AS0FJRku4PJ4zbfB6CQdzYCNcsvBblmZ?usp=sharing" target="_blank">NeuFace_DTU_65</a> | train on 65 scan of DTU dataset |
 | <a href="https://drive.google.com/drive/folders/1CAERoMTNUJwp1icElWFQB0hopRQHtNgk?usp=sharing" target="_blank">NeuFace_DTU_110</a> | train on 110 scan of DTU dataset |
 | <a href="https://drive.google.com/drive/folders/11hj2PRxYCGL42dHXUNnyD5PgRUsJoZMC?usp=sharing" target="_blank">NeuFace_DTU_118</a> | train on 118 scan of DTU dataset |
+
+
 
 If you want to use our trained model, please put the file that you download at `common_object/exps/{trained_model}`.
 
