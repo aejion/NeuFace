@@ -4,12 +4,10 @@
 
 <a href="https://github.com/MingwuZheng" target="_blank">Mingwu Zheng</a>, <a href="https://github.com/aejion" target="_blank">Haiyu Zhang</a>, <a href="https://scholar.google.com/citations?user=dnbjaWIAAAAJ&hl=zh-CN" target="_blank">Hongyu Yang</a>, <a href="https://irip.buaa.edu.cn/dihuang/index.html" target="_blank">Di Huang</a>
 
-<video autoplay>
-    <source src="./video/facescape.mp4" type="video/mp4">
-</video>
-<video autoplay>
-    <source src="./video/dtu.mp4" type="video/mp4">
-</video>
+<img src="./video/facescape_diffuse.gif" width=20%><img src="./video/facescape_spec.gif" width=20%><img src="./video/facescape_rgb.gif" width=20%><img src="./video/facescape_normal.gif" width=20%>
+
+<img src="./video/dtu_diffuse.gif" width=20%><img src="./video/dtu_spec.gif" width=20%><img src="./video/dtu_rgb.gif" width=20%><img src="./video/dtu_normal.gif" width=20%>
+
 Official code for CVPR 2023 paper NeuFace: Realistic 3D Neural Face Rendering from Multi-view Images.
 
 The paper presents a novel 3D face rendering model, namely **NeuFace**, to learn accurate and physically-meaningful underlying 3D representa
