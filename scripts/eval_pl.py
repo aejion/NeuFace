@@ -144,7 +144,7 @@ def main(args):
         rgb_pred = rgb_eval
         rgb_eval = np.clip(rgb_eval, 0, 1)
         rgb_eval = (rgb_eval * 255).astype(np.uint8)
-        # rgb_eval[mask.squeeze(-1) == 0] = 255
+        rgb_eval[mask.squeeze(-1) == 0] = 255
         img = Image.fromarray(rgb_eval)
         if eval_type == 'testset':
             img = img.rotate(90)
@@ -177,6 +177,7 @@ def main(args):
         rgb_eval = plt.lin2img(rgb_eval, img_res).detach().cpu().numpy()[0]
         rgb_eval = rgb_eval.transpose(1, 2, 0)
         rgb_eval = (rgb_eval * 255).astype(np.uint8)
+        rgb_eval[mask.squeeze(-1) == 0] = 255
         img = Image.fromarray(rgb_eval)
         if eval_type == 'testset':
             img = img.rotate(90)
@@ -187,6 +188,7 @@ def main(args):
         rgb_eval = plt.lin2img(rgb_eval, img_res).detach().cpu().numpy()[0]
         rgb_eval = rgb_eval.transpose(1, 2, 0)
         rgb_eval = (rgb_eval * 255).astype(np.uint8)
+        rgb_eval[mask.squeeze(-1) == 0] = 255
         img = Image.fromarray(rgb_eval)
         if eval_type == 'testset':
             img = img.rotate(90)
@@ -202,6 +204,7 @@ def main(args):
         img = img.enhance(2.5)
         img = img.convert('L')
         img = np.stack((np.array(img),) * 3, axis=-1)
+        img[mask.squeeze(-1) == 0] = 255
         img = Image.fromarray(img)
         if eval_type == 'testset':
             img = img.rotate(90)

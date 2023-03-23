@@ -121,8 +121,8 @@ class RayTracing(nn.Module):
             # Update distance
             curr_sdf_start = torch.clamp(curr_sdf_start, -0.5, 0.5)
             curr_sdf_end = torch.clamp(curr_sdf_end, -0.5, 0.5)
-            acc_start_dis = acc_start_dis + curr_sdf_start
-            acc_end_dis = acc_end_dis - curr_sdf_end
+            acc_start_dis = acc_start_dis + curr_sdf_start * 1.2
+            acc_end_dis = acc_end_dis - curr_sdf_end * 1.2
 
             # Update points
             curr_start_points = (cam_loc.unsqueeze(1) + acc_start_dis.reshape(batch_size, num_pixels, 1) * ray_directions).reshape(-1, 3)

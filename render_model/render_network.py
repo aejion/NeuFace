@@ -121,6 +121,7 @@ class RefNetwork(nn.Module):
         wr = 2 * normals * dot - w0
         light_transport = e3_SH(lmax=10, directions=wr, sh=sh_light, rho=roughness)
         light_transport = torch.relu(light_transport)
+        # As roughness has an effect on BRDF basis, use roughness as input slightly improve the decompose result
         x = torch.cat([dot, w0, normals, roughness], dim=-1)
         for index, layer in enumerate(self.brdf_network):
             x = layer(x)
