@@ -79,7 +79,7 @@ Results can be found in `common_object/evals/{train.expname}/rendering`.
 ## Citation
 If you find our work useful in your research, please consider citing:
 ```
-@inproceedings{zheng2022neuface,
+@inproceedings{zheng2023neuface,
 title={NeuFace: Realistic 3D Neural Face Rendering from Multi-view Images},
 author={Zheng, Mingwu and Zhang Haiyu and Yang, Hongyu and Huang, Di},
 booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
