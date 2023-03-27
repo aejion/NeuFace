@@ -88,3 +88,4 @@ year={2023}
 ```
 ## Acknowledgments
 - The codebase is developed based on <a href="https://github.com/lioryariv/volsdf" target="_blank">VolSDF</a> and <a href="https://github.com/lioryariv/idr" target="_blank">IDR</a> of Lior et al. Many thanks to their great contributions!
+- This paper is based on <a href="https://arxiv.org/abs/2203.14510" target="_blank">ImFace</a> (CVPR 2022), welcome to pay attention!
