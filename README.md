@@ -1,4 +1,4 @@
-# NeuFace: Realistic 3D Neural Face Rendering from Multi-view Images
+# NeuFace: Realistic 3D Neural Face Rendering from Multi-view Images [CVPR 2023]
 
 ###  [Paper](https://arxiv.org/abs/2303.14092)
 
