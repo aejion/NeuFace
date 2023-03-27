@@ -1,6 +1,6 @@
 # NeuFace: Realistic 3D Neural Face Rendering from Multi-view Images
 
-###  [Paper]()
+###  [Paper](https://arxiv.org/abs/2303.14092)
 
 <a href="https://github.com/MingwuZheng" target="_blank">Mingwu Zheng</a>, <a href="https://github.com/aejion" target="_blank">Haiyu Zhang</a>, <a href="https://scholar.google.com/citations?user=dnbjaWIAAAAJ&hl=zh-CN" target="_blank">Hongyu Yang</a>, <a href="https://irip.buaa.edu.cn/dihuang/index.html" target="_blank">Di Huang</a>
 
@@ -78,9 +78,13 @@ python evaluation/eval.py  --conf ./confs/dtu_fixed_cameras.conf --scan_id [SCAN
 Results can be found in `common_object/evals/{train.expname}/rendering`.
 ## Citation
 If you find our work useful in your research, please consider citing:
-
-	@inproceedings{
-	}
-
-## Acknowledgement
+```
+@inproceedings{zheng2022neuface,
+title={NeuFace: Realistic 3D Neural Face Rendering from Multi-view Images},
+author={Zheng, Mingwu and Zhang Haiyu and Yang, Hongyu and Huang, Di},
+booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+year={2023}
+}
+```
+## Acknowledgments
 - The codebase is developed based on <a href="https://github.com/lioryariv/volsdf" target="_blank">VolSDF</a> and <a href="https://github.com/lioryariv/idr" target="_blank">IDR</a> of Lior et al. Many thanks to their great contributions!
