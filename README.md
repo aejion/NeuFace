@@ -6,8 +6,6 @@
 
 <img src="./video/facescape_diffuse.gif" width=20%><img src="./video/facescape_spec.gif" width=20%><img src="./video/facescape_rgb.gif" width=20%><img src="./video/facescape_normal.gif" width=20%>
 
-<img src="./video/diffrec_diffuse.gif" width=20%><img src="./video/diffrec_spec.gif" width=20%><img src="./video/diffrec_rgb.gif" width=20%><img src="./video/diffrec_normal.gif" width=20%>
-
 <img src="./video/dtu_diffuse.gif" width=20%><img src="./video/dtu_spec.gif" width=20%><img src="./video/dtu_rgb.gif" width=20%><img src="./video/dtu_normal.gif" width=20%>
 
 <img src="./video/dtu_relight.gif" width=20%><img src="./video/dtu_relight2.gif" width=20%><img src="./video/dtu_relight3.gif" width=20%><img src="./video/dtu_relight4.gif" width=20%>
