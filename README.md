@@ -31,7 +31,7 @@ pip install -r requirement.txt
 ### Data and shape prior
 For human face, We use data from <a href="https://facescape.nju.edu.cn/" target="_blank">FaceScape Dataset</a> to evaluate our model. The detailed 3D mesh is used to generate a mask of each image's face area.  For more information about the data preprocessing of 3D mesh, refer to <a href="https://arxiv.org/abs/2203.14510" target="_blank">ImFace</a>. The ImFace model can be download from <a href="https://drive.google.com/drive/folders/1ljTo2QHT5C1e9-Q9MZhU9HmrqvyExoe6?usp=sharing" target="_blank">pretrained-model</a>.
 
-For common objects, the <a href="https://www.dropbox.com/sh/5tam07ai8ch90pf/AADniBT3dmAexvm_J1oL__uoaDTU" target="_blank"> DTU dataset</a> is used for model evaluation.
+For common objects, the <a href="https://www.dropbox.com/sh/5tam07ai8ch90pf/AADniBT3dmAexvm_J1oL__uoa" target="_blank"> DTU dataset</a> is used for model evaluation.
 
 ### Train on Facescape
 To train NeuFace on Facescape dataset, run:
