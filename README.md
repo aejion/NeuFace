@@ -12,8 +12,7 @@
 
 Official code for CVPR 2023 paper NeuFace: Realistic 3D Neural Face Rendering from Multi-view Images.
 
-The paper presents a novel 3D face rendering model, namely **NeuFace**, to learn accurate and physically-meaningful underlying 3D representa
-tions by neural rendering techniques.
+The paper presents a novel 3D face rendering model, namely **NeuFace**, to learn accurate and physically-meaningful underlying 3D representations by neural rendering techniques.
 
 NeuFace naturally incorporates low-rank neural BRDFs into physically based rendering, allowing it to capture facial geometry and complex appearance properties collaboratively, which enhances its robustness against *specular* reflections. Additionally, NeuFace exhibits commendable generalization abilities when applied to common objects.
 
