@@ -29,7 +29,21 @@ pip install -r requirement.txt
 
 ## Usage
 ### Data and shape prior
-For human face, We use data from <a href="https://facescape.nju.edu.cn/" target="_blank">FaceScape Dataset</a> to evaluate our model. The detailed 3D mesh is used to generate a mask of each image's face area.  For more information about the data preprocessing of 3D mesh, refer to <a href="https://arxiv.org/abs/2203.14510" target="_blank">ImFace</a>. The ImFace model can be download from <a href="https://drive.google.com/drive/folders/1ljTo2QHT5C1e9-Q9MZhU9HmrqvyExoe6?usp=sharing" target="_blank">pretrained-model</a>.
+For human face, We use data from <a href="https://facescape.nju.edu.cn/" target="_blank">FaceScape Dataset</a> to evaluate our model. The detailed 3D mesh is used to generate a mask of each image's face area. The ImFace model can be download from <a href="https://drive.google.com/drive/folders/1ljTo2QHT5C1e9-Q9MZhU9HmrqvyExoe6?usp=sharing" target="_blank">pretrained-model</a>.
+
+- Mesh preprocess
+To obtain the preprocessed mesh, run:
+```
+python data_preprocess/cut_mesh.py
+```
+Please make sure the path in the file is correct.
+
+- Image and mask rendering
+Once you have the preprocessed mesh, you can render the mask and image by running:
+```
+python data_preprocess/render_mask.py
+```
+Please make sure the path in the file is correct.
 
 For common objects, the <a href="https://www.dropbox.com/sh/5tam07ai8ch90pf/AADniBT3dmAexvm_J1oL__uoa" target="_blank"> DTU dataset</a> is used for model evaluation.
 
