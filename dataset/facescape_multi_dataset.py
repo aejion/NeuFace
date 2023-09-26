@@ -127,10 +127,10 @@ class FaceScape(torch.utils.data.Dataset):
 
         self.sampling_idx = None
 
-        image_dir = '{0}/imface_image'.format(self.instance_dir)
-        mask_dir = '{0}/imface_mask'.format(self.instance_dir)
-        params_dir = '{0}/imface_image'.format(self.instance_dir)
-        ply_path = '{0}/imface_model'.format(self.instance_dir)
+        image_dir = '{0}/imface_image'.format(self.instance_dir)  # path to image
+        mask_dir = '{0}/imface_mask'.format(self.instance_dir)    # path to mask
+        params_dir = '{0}/imface_image'.format(self.instance_dir) # path to camera parameters
+        ply_path = '{0}/imface_model'.format(self.instance_dir)   # path to the TU model
         expression = ['neutral', 'smile', 'mouth_stretch', 'anger', 'jaw_left', 'jaw_right', 'jaw_forward',
                       'mouth_left', 'mouth_right', 'dimpler', 'chin_raiser',
                       'lip_puckerer', 'lip_funneler', 'sadness', 'lip_roll', 'grin', 'cheek_blowing', 'eye_closed',
