@@ -3,7 +3,7 @@ import torch
 from torch import nn
 import torch.nn.functional as F
 from .conditioned_nerual_fields import CONDITIONED_NEURAL_FIELD
-from models import loss, rigid
+from models import rigid
 
 
 def warp(xyz, deformation, warp_type):
